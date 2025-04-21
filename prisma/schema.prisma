@@ -1,0 +1,164 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model Users {
+  userId    Int   @id @default(autoincrement())// Auto-generated UUID
+  username  String   @unique
+  email     String   @unique
+  password  String?
+  mobile    String
+  role      Role   @default(USER)
+  status    Status @default(INACTIVE)
+  createdAt DateTime @default(now()) // Auto-set to current timestamp
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Department{
+  departmentId Int @id @default(autoincrement())// Auto-generated UUID
+  departmentName String 
+  createdAt DateTime @default(now()) // Auto-set to current timestamp
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Creative_size{
+  creativeSizeId Int @id @default(autoincrement())// Auto-generated UUID
+  creativeSize String 
+  campaignType String 
+  createdAt DateTime @default(now()) // Auto-set to current timestamp
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Client{
+  cId Int @id @default(autoincrement())// Auto-generated UUID
+  name String
+  email String
+  mobile String
+  companyName String
+  userId Int
+  createdAt DateTime @default(now()) // Auto-set to current timestamp
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Campaign_mode{
+  modeId Int @id @default(autoincrement())// Auto-generated UUID
+  modeName String 
+  createdAt DateTime @default(now()) // Auto-set to current timestamp
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Payout_currency{
+  currencyId Int @id @default(autoincrement())// Auto-generated UUID
+  currencyName String
+  currencySymbol String
+}
+
+model Order{
+  orderId Int @id @default(autoincrement())// Auto-generated UUID
+  userId Int
+  campaignType String
+  departmentId Int
+  clientId Int
+  campaignName String
+  startDate String
+  endDate String
+  payoutCurrency String
+  budget Int
+  createdAt DateTime @default(now()) // Auto-set to current timestamp
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Order_logs{
+  id Int @id @default(autoincrement())// Auto-generated UUID
+  orderId Int
+  userId Int
+  campaignType String
+  departmentId Int
+  clientId Int
+  campaignName String
+  startDate String
+  endDate String
+  payoutCurrency String
+  budget Int
+  createdAt DateTime @default(now()) // Auto-set to current timestamp
+}
+
+model Order_details{
+  id Int @id @default(autoincrement())// Auto-generated UUID
+  orderId Int
+  campaignName String
+  campaignDesc String
+  volume Decimal
+  payout Decimal
+  budget Decimal
+  createdAt DateTime @default(now()) // Auto-set to current timestamp
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Order_details_logs{
+  id Int @id @default(autoincrement())// Auto-generated UUID
+  orderId Int
+  orderDetailsId Int
+  campaignName String
+  campaignDesc String
+  volume Decimal
+  payout Decimal
+  budget Decimal
+  campaignType String
+  createdAt DateTime @default(now()) // Auto-set to current timestamp
+}
+
+model Creative_type{
+  id Int @id @default(autoincrement())// Auto-generated UUID
+  name String
+  active Boolean
+}
+
+model Creatives{
+  creativeId Int @id @default(autoincrement())// Auto-generated UUID
+  orderDetailId Int
+  status Int
+  creativeName String
+  creativeSize String?
+  clickURL String
+  creativeType String?
+  imgPath String?
+  trackingURL String
+  VideoADtype String?
+  videoPath String?
+  vastTag String?
+  YTCampaignType String?
+  YTVideoLink String?
+  YTWithCompanion String?
+  YTandNativeHeadline String?
+  YTDisplayURL String?
+  YTCallToAction String?
+  YTBanner String?
+  HTMLTag String?
+  NativeDescription String?
+  NativeIconPreviewURL String?
+  NativeCreativePreviewURL String?
+}
