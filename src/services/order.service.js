@@ -119,7 +119,7 @@ const createOrderDetail = async (orderId,campaignName,campaignDesc,volume,payout
   }
 };
 
-const createOrderDetailLogs = async (orderId,campaignName,campaignDesc,volume,payout,campaignType,orderDetailsId) => {
+const createOrderDetailLogs = async (orderId,campaignName,campaignDesc,volume,payout,orderDetailsId) => {
   try {
     const orderDetaillogsData = await prisma.order_details_logs.create({
       data:{
@@ -130,7 +130,6 @@ const createOrderDetailLogs = async (orderId,campaignName,campaignDesc,volume,pa
         volume:volume,
         payout:payout,
         budget:Number(volume)*Number(payout),
-        campaignType:campaignType
       }
     })
 
@@ -146,9 +145,13 @@ const createOrderDetailLogs = async (orderId,campaignName,campaignDesc,volume,pa
   }
 };
 
-const getAllOrderDetailsFromDB = async () => {
+const getAllOrderDetailsFromDB = async (orderId) => {
   try {
-    const orderDetailsData = await prisma.order_details.findMany()
+    const orderDetailsData = await prisma.order_details.findMany({
+      where:{
+        orderId:Number(orderId)
+      }
+    })
 
     return orderDetailsData
   } catch (error) {

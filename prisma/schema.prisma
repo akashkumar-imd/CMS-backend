@@ -127,7 +127,6 @@ model Order_details_logs{
   volume Decimal
   payout Decimal
   budget Decimal
-  campaignType String
   createdAt DateTime @default(now()) // Auto-set to current timestamp
 }
 
@@ -139,8 +138,8 @@ model Creative_type{
 
 model Creatives{
   creativeId Int @id @default(autoincrement())// Auto-generated UUID
-  orderDetailId Int
-  status Int
+  orderId Int
+  status String
   creativeName String
   creativeSize String?
   clickURL String

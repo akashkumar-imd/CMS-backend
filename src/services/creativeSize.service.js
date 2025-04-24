@@ -16,7 +16,7 @@ const getAllCreativeSizes = async()=>{
   }
 }
 
-const createCreative = async(creativeSize,campaignType)=>{
+const createCreativeSize = async(creativeSize,campaignType)=>{
   try {
     const newCreativeSize= await prisma.creative_size.create({
       data:{
@@ -35,6 +35,6 @@ const createCreative = async(creativeSize,campaignType)=>{
 }
 
 export { 
-  createCreative,
+  createCreativeSize,
   getAllCreativeSizes
 }

@@ -1,5 +1,6 @@
 import { getAllClient } from "../services/client.service.js";
 import { getAllDepartment } from "../services/department.service.js";
+import { getAllPayoutCurrency } from "../services/payoutCurrency.service.js";
 import {
   createOrder,
   getAllOrderFromDB,
@@ -8,7 +9,6 @@ import {
   createOrderDetailLogs,
   getAllOrderDetailsFromDB,
 } from "../services/order.service.js";
-import { gettingClientName, gettingDepartmentName } from "../utils/common.js";
 import { messageLogs } from "../utils/message.js";
 
 //Create order controller
@@ -43,7 +43,7 @@ const createOrders = async (req, res) => {
     const orderId = createdOrderData.orderId;
 
     // logs created in order logs table
-    await createOrderLogs(
+    const orderLogs = await createOrderLogs(
       orderId,
       departmentId,
       clientId,
@@ -60,6 +60,7 @@ const createOrders = async (req, res) => {
       statusCode: 201,
       message: "Order Created Succcessfully..!",
       orderId: orderId,
+      orderLogsId: orderLogs.id
     });
   } catch (error) {
     console.log(error);
@@ -74,10 +75,11 @@ const getAllOrder = async (req, res) => {
   try {
     //fetching all the data from backend
 
-    const [orders, departmentDetails, clientDetails] = await Promise.all([
+    const [orders, departmentDetails, clientDetails,payoutCurrencyDetails] = await Promise.all([
       getAllOrderFromDB(),
       getAllDepartment(),
       getAllClient(),
+      getAllPayoutCurrency()
     ]);
 
     const deptMap = new Map(
@@ -85,6 +87,9 @@ const getAllOrder = async (req, res) => {
     );
     const clientMap = new Map(
       clientDetails.map((c) => [c.cId, c.companyName])
+    );
+    const currencyMap = new Map(
+      payoutCurrencyDetails.map((p) => [p.currencyId, `${p.currencyName} (${p.currencySymbol})`])
     );
 
     const allOrdersDetails = orders.map((orderItem) => ({
@@ -94,7 +99,7 @@ const getAllOrder = async (req, res) => {
       client: clientMap.get(Number(orderItem.clientId)) || "Client Name",
       campaignName: orderItem.campaignName,
       campaignType: orderItem.campaignType,
-      payoutCurrency: orderItem.payoutCurrency,
+      payoutCurrency: currencyMap.get(Number(orderItem.payoutCurrency)) || "Currency",
       budget: orderItem.budget,
       startDate: orderItem.startDate,
       endDate: orderItem.endDate,
@@ -139,9 +144,10 @@ const createOrderDetails = async (req, res) => {
       campaignDesc,
       volume,
       payout,
-      campaignType
     );
     const orderDetailsId = orderDetailData.id;
+    console.log(orderDetailsId);
+    
 
     //logs created in order details logs
     await createOrderDetailLogs(
@@ -150,7 +156,6 @@ const createOrderDetails = async (req, res) => {
       campaignDesc,
       volume,
       payout,
-      campaignType,
       orderDetailsId
     );
     return res.status(201).json({
@@ -168,9 +173,10 @@ const createOrderDetails = async (req, res) => {
 
 //Get all order details controller
 const getAllOrderDetails = async (req, res) => {
+  const { orderId } = req.query;
   try {
     //fetching all the data from backend
-    const orderDetails = await getAllOrderDetailsFromDB();
+    const orderDetails = await getAllOrderDetailsFromDB(orderId);
 
     return res.status(200).json({
       statusCode: 200,

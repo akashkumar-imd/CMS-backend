@@ -174,6 +174,27 @@ const gettingClientName=(clients, id)=>{
   return client ? client.name : null;
 }
 
+const checkCreativePayloadValidation=(orderId,creativeName,clickURL,trackingURL)=>{
+
+  if (!Number(orderId)) {
+    return { status: 400,  message: messageLogs.VALID_ORDER_ID };
+  }
+
+  if(!validateName(creativeName)){
+    return { status: 400,  message: messageLogs.VALID_CREATIVE_NAME };
+  }
+
+  if(!validateName(clickURL)){
+    return { status: 400,  message: messageLogs.VALID_CLICK_URL };
+  }
+
+  if(!validateName(trackingURL)){
+    return { status: 400,  message: messageLogs.VALID_TRACKING_URL };
+  }
+
+  return false
+}
+
 export { 
   authenticateToken,
   checkSignUpValidation,
@@ -184,5 +205,6 @@ export {
   checkCreativeSizePayloadValidation,
   gettingDepartmentName,
   gettingClientName,
-  checkCreativeTypePayloadValidation
+  checkCreativeTypePayloadValidation,
+  checkCreativePayloadValidation
 };
